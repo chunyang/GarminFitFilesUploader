@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Mount watch
+mount /mnt/fr10 || exit 1
+
+# Rsync runs
+rsync --verbose \
+    --recursive \
+    --checksum \
+    --times \
+    --max-delete=-1 \
+    --human-readable \
+    --itemize-changes \
+    /mnt/fr10/GARMIN/ACTIVITY/ \
+    $HOME/etc/runs/
+
+# Unmount watch
+umount /mnt/fr10
