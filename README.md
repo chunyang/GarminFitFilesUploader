@@ -1,20 +1,32 @@
-GarminFitFilesUploader
-======================
+syncruns
+========
 
-Simple script that helps you uploading your activities (.fit files) to garmin connect.
+Copy .FIT files from a Garmin watch to the PC and upload them to Garmin
+Connect.
 
-Requirements:
+Requirements
+------------
 
-	# 'mechanize' is used to automate interactions with the garmin connect site
-	$ gem install mechanize
+ * 'mechanize' is used to automate interactions with the Garmin Connect site
+    $ gem install mechanize
 
-Usage is pretty easy:
+Configuration
+-------------
 
-	$ GarminFitFilesUploader.rb USERNAME PASSWORD ACTIVITIES_FOLDER
+Modify the constants at the top of the `syncruns` script to reflect where the
+watch should be mounted and where .FIT files should be copied to on the PC.
+Example configuration options are below.
 
-		> USERNAME: Your garmin connect username
-		> PASSWORD: Your garmin connect user password
-		> ACTIVITIES_FOLDER: Upload all .fit in this folder to garmin connect
+    WATCH_MOUNT = '/mnt/fr10'
+    FIT_DIR = '/home/cyang/etc/runs'
 
-	# Uploading all my extracted fit files to garmin connect
-	$ GarminFitFilesUploader.rb livioso liviosopw ~/.config/garmin-extractor/45632105943/activities
+The entry in `/etc/fstab` corresponding to the watch is:
+
+    # Forerunner 10
+    LABEL=GARMIN /mnt/fr10 vfat ro,user 0 2
+
+Usage
+-----
+
+After configuring the script, just run the `syncruns` script. Provide Garmin
+Connect credentials for sign-in when prompted.
