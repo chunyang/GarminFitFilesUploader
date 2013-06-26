@@ -85,12 +85,14 @@ print "Mounting watch ... "
 system('mount', WATCH_MOUNT) || exit(1)
 puts "done."
 
+# Copy runs to computer and sync with Garmin Connect
 begin
-  # Copy runs to computer
+  # List of existing files
   existing_files = Hash[Dir.glob(File.join(FIT_DIR, '*')).map do |fn|
     [Digest::MD5.file(fn).hexdigest, fn]
   end]
 
+  # List of new files based on MD5 sum
   new_files = Dir.glob(File.join(WATCH_MOUNT, 'GARMIN', 'ACTIVITY', '*')).map do |fn|
     [Digest::MD5.file(fn).hexdigest, fn]
   end.select { |h, fn| !existing_files.include? h }.map &:last
