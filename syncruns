@@ -111,7 +111,7 @@ begin
   FileUtils.cp(new_files, FIT_DIR, preserve: true)
   puts 'done.'
 
-  print 'Uploading files to Garmin Connect ... '
+  puts 'Uploading files to Garmin Connect ... '
   upload(*new_files)
 ensure
   # Unmount watch
