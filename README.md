@@ -7,7 +7,9 @@ Connect.
 Requirements
 ------------
 
- * 'mechanize' is used to automate interactions with the Garmin Connect site
+[mechanize](http://mechanize.rubyforge.org/) is used to automate interactions
+with the Garmin Connect site
+
     $ gem install mechanize
 
 Configuration
