@@ -1,11 +1,12 @@
 #include <stdio.h>
 
-#include "fit.h"
+#include "sdk/fit.h"
+#include "util.h"
 
 int main(int argc, const char *argv[])
 {
     FILE *input;
-    fit_file_hdr header;
+    FIT_FILE_HDR header;
 
     if (argc < 2) {
         printf("Usage: %s <.FIT file>\n", argv[0]);
@@ -24,19 +25,10 @@ int main(int argc, const char *argv[])
     fit_read_file_header(&header, input);
 
     /* Print out header information */
-    printf("Header size: %hhu\n", header.header_size);
-    printf("Protocol Version: %hhu\n", header.protocol_version);
-    printf("Profile Version: %hu\n", header.profile_version);
-    printf("Data size: %u\n", header.data_size);
-    printf("Data Type Byte: %c%c%c%c\n", header.data_type[0],
-            header.data_type[1], header.data_type[2], header.data_type[3]);
-
-    if (header.header_size > 12) {
-        printf("CRC: %hhX\n", header.crc);
-    }
+    fit_print_file_header(header);
 
     /* Read messages */
-    fit_read_message(input);
+    //fit_read_message(input);
 
     fclose(input);
 

@@ -1,8 +1,10 @@
-#ifndef FIT_H
-#define FIT_H
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <stdio.h>
 #include <stdint.h>
+
+#include "sdk/fit.h"
 
 /*
  * File header
@@ -46,8 +48,9 @@ typedef enum {
  * Functions
  */
 
-void fit_read_file_header(fit_file_hdr *, FILE *);
+void fit_read_file_header(FIT_FILE_HDR *, FILE *);
+void fit_print_file_header(FIT_FILE_HDR);
 
-void fit_read_message(FILE *);
+//void fit_read_message(FILE *);
 
 #endif
