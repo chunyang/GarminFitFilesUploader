@@ -38,29 +38,55 @@ void fit_print_file_header(FIT_FILE_HDR header)
  * \param[in] file Pointer to the .FIT file
  * \return Pointer to message, message storage is allocated by this function
  */
-//fit_mesg* fit_read_message(FILE *file)
-//{
-//    fit_mesg_hdr header;
-//    fread(&header, FIT_MESG_HDR_SIZE, 1, file);
-//
-//    /* Branch based on message header type */
-//    if (FIT_MESG_HDR_TYPE(header) == FIT_MESG_NORMAL) {
-//        printf("Message header type: normal\n");
-//
-//        printf("Message type: ");
-//        if (FIT_MESG_HDR_MESG_TYPE(header) == FIT_MESG_DEFN) {
-//            printf("definition\n");
-//        } else {
-//            printf("data\n");
-//        }
-//
-//        printf("Local message type: %d\n",
-//                FIT_MESG_HDR_LOCAL_MESG_TYPE(header));
-//    } else {
-//        printf("Message header type: compressed\n");
-//        printf("Local message type: %d\n",
-//                FIT_MESG_HDR_COMPRESSED_LOCAL_MESG_TYPE(header));
-//        printf("Time offset (seconds): %d\n",
-//                FIT_MESG_HDR_COMPRESSED_TIME_OFFSET(header));
-//    }
-//}
+void fit_read_message(FILE *file)
+{
+    FIT_UINT8 header;
+    fread(&header, FIT_HDR_SIZE, 1, file);
+
+    /* Branch based on message header type */
+    if (header & FIT_HDR_TIME_REC_BIT) {
+        /* Compressed message header */
+        printf("Message header type: compressed\n");
+
+        printf("Local message type: %d\n",
+                (header & FIT_HDR_TIME_TYPE_MASK) >> FIT_HDR_TIME_TYPE_SHIFT);
+
+        printf("Time offset (seconds): %d\n",
+                header & FIT_HDR_TIME_OFFSET_MASK);
+    } else {
+        /* Normal message header */
+        printf("Message header type: normal\n");
+
+        printf("Message type: ");
+        if (header & FIT_HDR_TYPE_DEF_BIT) {
+            printf("definition\n");
+        } else {
+            /* Data message */
+            printf("data\n");
+        }
+
+        printf("Local message type: %d\n", header & FIT_HDR_TYPE_MASK);
+
+        if (header & FIT_HDR_TYPE_DEF_BIT) {
+            /* Definition message */
+            FIT_MESG_DEF def;
+            fread(&def, FIT_MESG_SIZE_NO_FIELDS, 1, file);
+
+            printf("Architecture type: ");
+            if (def.arch) {
+                printf("big endian\n");
+            } else {
+                printf("little endian\n");
+            }
+
+            printf("Global message number: ");
+            if (def.arch) {
+                printf("%d\n", htons(def.global_mesg_num));
+            } else {
+                printf("%d\n", def.global_mesg_num);
+            }
+
+            printf("Number of fields: %d\n", def.num_fields);
+        }
+    }
+}

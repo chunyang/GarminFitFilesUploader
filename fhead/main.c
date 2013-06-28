@@ -28,7 +28,7 @@ int main(int argc, const char *argv[])
     fit_print_file_header(header);
 
     /* Read messages */
-    //fit_read_message(input);
+    fit_read_message(input);
 
     fclose(input);
 
