@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "sdk/fit.h"
 
@@ -23,6 +24,6 @@
 void fit_read_file_header(FIT_FILE_HDR *, FILE *);
 void fit_print_file_header(FIT_FILE_HDR);
 
-void fit_read_message(FILE *);
+FIT_MESG_DEF* fit_read_message(FILE *);
 
 #endif

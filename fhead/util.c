@@ -38,10 +38,13 @@ void fit_print_file_header(FIT_FILE_HDR header)
  * \param[in] file Pointer to the .FIT file
  * \return Pointer to message, message storage is allocated by this function
  */
-void fit_read_message(FILE *file)
+FIT_MESG_DEF* fit_read_message(FILE *file)
 {
     FIT_UINT8 header;
+    FIT_MESG_DEF *def = NULL;
     fread(&header, FIT_HDR_SIZE, 1, file);
+
+    printf("=== Message ===\n");
 
     /* Branch based on message header type */
     if (header & FIT_HDR_TIME_REC_BIT) {
@@ -69,24 +72,67 @@ void fit_read_message(FILE *file)
 
         if (header & FIT_HDR_TYPE_DEF_BIT) {
             /* Definition message */
-            FIT_MESG_DEF def;
-            fread(&def, FIT_MESG_SIZE_NO_FIELDS, 1, file);
+            def = malloc(FIT_MESG_SIZE_NO_FIELDS);
+
+            if (!def) {
+                fprintf(stderr, "Unable to allocate space for message.\n");
+                return NULL;
+            }
+
+            fread(def, FIT_MESG_SIZE_NO_FIELDS, 1, file);
 
             printf("Architecture type: ");
-            if (def.arch) {
+            if (def->arch) {
                 printf("big endian\n");
             } else {
                 printf("little endian\n");
             }
 
             printf("Global message number: ");
-            if (def.arch) {
-                printf("%d\n", htons(def.global_mesg_num));
+            if (def->arch) {
+                printf("%d\n", htons(def->global_mesg_num));
             } else {
-                printf("%d\n", def.global_mesg_num);
+                printf("%d\n", def->global_mesg_num);
             }
 
-            printf("Number of fields: %d\n", def.num_fields);
+            printf("Number of fields: %d\n", def->num_fields);
+
+            /* Reallocate space for message with the correct number
+             * of fields
+             */
+            FIT_MESG_DEF *def2;
+            def2 = realloc(def, FIT_MESG_SIZE_NO_FIELDS +
+                                (def->num_fields * FIT_FIELD_DEF_SIZE));
+
+            if (!def2) {
+                fprintf(stderr, "Unable to reallocate space for message.\n");
+                return NULL;
+            }
+            def2 = def;
+
+            fread(def->fields, FIT_FIELD_DEF_SIZE, def->num_fields, file);
+
+            printf("Fields:\n");
+            unsigned int i;
+            for (i = 0; i < def->num_fields; i++) {
+                printf("  === Field ===\n");
+
+                FIT_FIELD_DEF *field_def = ((FIT_FIELD_DEF*) def->fields) + i;
+
+                printf("  Field definition number: %d\n",
+                        field_def->field_def_num);
+                printf("  Size: %d\n", field_def->size);
+                printf("  Endian ability: %d\n",
+                        (field_def->base_type & FIT_BASE_TYPE_ENDIAN_FLAG) >> 7);
+                printf("  Base type number: %d\n",
+                        field_def->base_type & FIT_BASE_TYPE_NUM_MASK);
+
+                printf("  === End of field ===\n");
+            }
         }
     }
+
+    printf("=== End of message ===\n");
+
+    return def;
 }

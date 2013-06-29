@@ -7,6 +7,7 @@ int main(int argc, const char *argv[])
 {
     FILE *input;
     FIT_FILE_HDR header;
+    FIT_MESG_DEF *mesg;
 
     if (argc < 2) {
         printf("Usage: %s <.FIT file>\n", argv[0]);
@@ -28,7 +29,8 @@ int main(int argc, const char *argv[])
     fit_print_file_header(header);
 
     /* Read messages */
-    fit_read_message(input);
+    mesg = fit_read_message(input);
+    free(mesg);
 
     fclose(input);
 
