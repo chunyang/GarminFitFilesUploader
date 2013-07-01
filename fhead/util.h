@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "sdk/fit.h"
 #include "sdk/fit_convert.h"
@@ -24,6 +25,13 @@
 
 void fit_read_file_header(FIT_FILE_HDR *, FILE *);
 void fit_print_file_header(FIT_FILE_HDR);
+
+void fit_compare_file_id(FIT_FILE_ID_MESG *,
+                         FIT_FILE_ID_MESG *,
+                         unsigned int);
+void fit_compare_file_creator(FIT_FILE_CREATOR_MESG *,
+                              FIT_FILE_CREATOR_MESG *,
+                              unsigned int file_number);
 
 FIT_MESG_DEF* fit_read_message(FILE *);
 

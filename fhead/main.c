@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "sdk/fit.h"
 #include "util.h"
@@ -10,6 +11,11 @@ int main(int argc, const char *argv[])
     FIT_CONVERT_RETURN convert_return = FIT_CONVERT_CONTINUE;
     FIT_UINT32 buf_size;
     FIT_UINT32 mesg_index = 0;
+
+    /* Keep track of file and device information */
+    FIT_FILE_ID_MESG file_id;
+    FIT_FILE_CREATOR_MESG file_creator;
+    unsigned int file_number = 0;
 
     if (argc < 2) {
         printf("Usage: %s <.FIT file>\n", argv[0]);
@@ -30,6 +36,7 @@ int main(int argc, const char *argv[])
     // /* Print out header information */
     // fit_print_file_header(header);
 
+    // Initialize FitConvert, read_file_header = TRUE
     FitConvert_Init(FIT_TRUE);
 
     /* Read messages */
@@ -49,6 +56,17 @@ int main(int argc, const char *argv[])
 
                     printf("Message %d (%d) - \n", mesg_index++, mesg_num);
                     printf("Message available!\n");
+
+                    switch(mesg_num) {
+                        case FIT_MESG_NUM_FILE_ID:
+                            fit_compare_file_id((FIT_FILE_ID_MESG*) mesg,
+                                    &file_id, file_number);
+                            break;
+                        case FIT_MESG_NUM_FILE_CREATOR:
+                            fit_compare_file_creator((FIT_FILE_CREATOR_MESG*) mesg,
+                                    &file_creator, file_number);
+                            break;
+                    }
                 }
 
                 default:

@@ -33,6 +33,72 @@ void fit_print_file_header(FIT_FILE_HDR header)
  */
 
 /**
+ * Parse a file id message and compare it with previous file id info
+ *
+ * \param[in] new_id Pointer to new file id message
+ * \param[in] old_id Pointer to saved file id information
+ * \param[in] file_number The index of the current file (first file is 0)
+ */
+void fit_compare_file_id(FIT_FILE_ID_MESG *new_id, FIT_FILE_ID_MESG *old_id,
+        unsigned int file_number)
+{
+    if (file_number == 0) {
+        /* This is the first file, just store its file
+         * id message
+         */
+         memcpy(&file_id, mesg, FIT_FILE_ID_MESG_SIZE);
+    } else {
+        /* This is not the first file, check to see
+         * if type, manufacturer, and product are
+         * the same
+         */
+        if (old_id->type != new_id->type) {
+            fprintf(stderr, "File types do not match (%hhd vs %hhd). Aborting.\n",
+                    old_id->type, new_id->type);
+            exit(5);
+        }
+
+        if (old_id->manufacturer != new_id->manufacturer) {
+            fprintf(stderr, "Warning: manufacturer does not match (%hd vs %hd). Ignoring.\n",
+                    old_id->manufacturer, new_id->manufacturer);
+        }
+
+        if (old_id->product != new_id->product) {
+            fprintf(stderr, "Warning: product does not match (%hd vs %hd). Ignoring.\n",
+                    old_id->product, new_id->product);
+        }
+
+        if (old_id->time_created > new_id->time_created) {
+            fprintf(stderr, "Warning: latter file has earlier creation time.\n");
+            old_id->time_created = new_id->time_created;
+        }
+    }
+}
+
+/**
+ * Parse a file creator message and compare with previous file creator info.
+ *
+ * \param[in] new_creator Pointer to new file creator message
+ * \param[in] old_creator Pointer to saved file creator information
+ * \param[in] file_number The index of the current file (first file is 0)
+ */
+void fit_compare_file_creator(FIT_FILE_CREATOR_MESG *new_creator,
+        FIT_FILE_CREATOR_MESG *old_creator, unsigned int file_number)
+{
+    if (file_number == 0) {
+        /* No previous creator, just copy new info */
+        memcpy(old_creator, new_creator, FIT_FILE_CREATOR_MESG_SIZE);
+    } else {
+        if (new_creator->software_version != old_creator->software_version) {
+            fprintf(stderr, "Warning: software versions differ.\n");
+        }
+        if (new_creator->hardware_version != old_creator->hardware_version) {
+            fprintf(stderr, "Warning: hardware versions differ.\n");
+        }
+    }
+}
+
+/**
  * Read a message from the file
  *
  * \param[in] file Pointer to the .FIT file
