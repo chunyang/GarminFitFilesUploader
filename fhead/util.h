@@ -31,7 +31,8 @@ void fit_compare_file_id(FIT_FILE_ID_MESG *,
                          unsigned int);
 void fit_compare_file_creator(FIT_FILE_CREATOR_MESG *,
                               FIT_FILE_CREATOR_MESG *,
-                              unsigned int file_number);
+                              unsigned int);
+void update_activity(FIT_ACTIVITY_MESG *, FIT_ACTIVITY_MESG *, unsigned int);
 
 FIT_MESG_DEF* fit_read_message(FILE *);
 

@@ -46,7 +46,7 @@ void fit_compare_file_id(FIT_FILE_ID_MESG *new_id, FIT_FILE_ID_MESG *old_id,
         /* This is the first file, just store its file
          * id message
          */
-         memcpy(&file_id, mesg, FIT_FILE_ID_MESG_SIZE);
+         memcpy(old_id, new_id, FIT_FILE_ID_MESG_SIZE);
     } else {
         /* This is not the first file, check to see
          * if type, manufacturer, and product are
@@ -95,6 +95,26 @@ void fit_compare_file_creator(FIT_FILE_CREATOR_MESG *new_creator,
         if (new_creator->hardware_version != old_creator->hardware_version) {
             fprintf(stderr, "Warning: hardware versions differ.\n");
         }
+    }
+}
+
+/**
+ * Update activity information when concatenating files
+ *
+ * \param[in] new_act Pointer to new activity message
+ * \param[in] old_act Pointer to saved activity information
+ * \param[in] file_number The index of the current file (first file is 0)
+ */
+void update_activity(FIT_ACTIVITY_MESG *new_act,
+        FIT_ACTIVITY_MESG *old_act, unsigned int file_number)
+{
+    if (file_number == 0) {
+        /* No previous activity info, just copy new info */
+        memcpy(old_act, new_act, FIT_ACTIVITY_MESG_SIZE);
+    } else {
+        old_act->total_timer_time += new_act->total_timer_time;
+        old_act->num_sessions += new_act->num_sessions;
+        /* TODO: Check other fields?? */
     }
 }
 
