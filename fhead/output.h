@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sdk/fit.h"
-#include "sdk/fit_crc.h"
-#include "sdk/fit_product.h"
+#include <fit/fit.h>
+#include <fit/fit_crc.h>
+#include <fit/fit_product.h>
 
 void write_header(FILE *fp);
 

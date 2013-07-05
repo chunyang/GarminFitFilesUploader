@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sdk/fit.h"
-#include "sdk/fit_convert.h"
+#include <fit/fit.h>
+#include <fit/fit_convert.h>
 
 /*
  * File header

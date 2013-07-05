@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sdk/fit.h"
-#include "sdk/fit_product.h"
+#include <fit/fit.h>
+#include <fit/fit_product.h>
+
 #include "output.h"
 #include "util.h"
 
